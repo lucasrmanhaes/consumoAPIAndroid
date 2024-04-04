@@ -8,9 +8,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.lucas.consultacep.model.Endereco
 
-@Composable
-fun CardEndereco() {
+    @Composable
+    fun CardEndereco(endereco: Endereco) {
+
     Card(modifier = Modifier
         .fillMaxWidth()
         .padding(bottom = 4.dp)) {
@@ -18,11 +20,13 @@ fun CardEndereco() {
             .fillMaxWidth()
             .padding(8.dp)
         ) {
-            Text(text = "CEP:")
-            Text(text = "Rua:")
-            Text(text = "Cidade:")
-            Text(text = "Bairro:")
-            Text(text = "UF:")
+
+            Text(text = "CEP: ${endereco.cep}")
+            Text(text = "Rua: ${endereco.logradouro}")
+            Text(text = "Cidade: ${endereco.localidade}")
+            Text(text = "Bairro: ${endereco.bairro}")
+            Text(text = "UF: ${endereco.uf}")
+
         }
     }
 }
