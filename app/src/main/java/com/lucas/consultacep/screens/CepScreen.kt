@@ -1,5 +1,6 @@
 package com.lucas.consultacep.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,14 +30,19 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lucas.consultacep.components.CardEndereco
+import com.lucas.consultacep.model.Endereco
+import com.lucas.consultacep.services.RetrofitFactory
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CepScreen() {
     var cepState by remember { mutableStateOf("") }
     var ufState by remember { mutableStateOf("") }
-    var cidadeState by remember { mutableStateOf("") }
-    var ruaState by remember { mutableStateOf("") }
+    var localidadeState by remember { mutableStateOf("") }
+    var logradouroState by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -65,7 +71,24 @@ fun CepScreen() {
                         Text(text = "Qual o CEP procurado?")
                     },
                     trailingIcon = {
-                        IconButton(onClick = { /*TODO*/ }) {
+                        IconButton(
+                            onClick = {
+                                var call = RetrofitFactory().getEnderecoService().getEnderecoByCep(cepState)
+                                call.enqueue(object : Callback<Endereco>{
+                                    override fun onResponse(
+                                        p0: Call<Endereco>,
+                                        p1: Response<Endereco>
+                                    ) {
+                                        Log.i("response", "${p1.body()}")
+                                    }
+
+                                    override fun onFailure(p0: Call<Endereco>, p1: Throwable) {
+                                        TODO("Not yet implemented")
+                                    }
+
+                                })
+                            }
+                        ){
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = ""
@@ -101,9 +124,9 @@ fun CepScreen() {
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
-                        value = cidadeState,
+                        value = localidadeState,
                         onValueChange = {
-                            cidadeState = it
+                            localidadeState = it
                         },
                         modifier = Modifier.weight(2f),
                         label = {
@@ -118,9 +141,9 @@ fun CepScreen() {
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     OutlinedTextField(
-                        value = ruaState,
+                        value = logradouroState,
                         onValueChange = {
-                            ruaState = it
+                            logradouroState = it
                         },
                         modifier = Modifier.weight(2f),
                         label = {
@@ -131,7 +154,31 @@ fun CepScreen() {
                             capitalization = KeyboardCapitalization.Words
                         )
                     )
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(
+                        onClick = {
+                            var call = RetrofitFactory().getEnderecoService().getListEndereco(
+                                uf = ufState,
+                                localidade = localidadeState,
+                                logradouro = logradouroState
+                            )
+                            call.enqueue(object : Callback<List<Endereco>>{
+                                override fun onResponse(
+                                    p0: Call<List<Endereco>>,
+                                    p1: Response<List<Endereco>>
+                                ) {
+                                    Log.i("response", "${p1.body()}")
+                                }
+
+                                override fun onFailure(
+                                    p0: Call<List<Endereco>>,
+                                    p1: Throwable
+                                ) {
+                                    Log.i("Exception","${p1.message}")
+                                }
+
+                            })
+                        }
+                    ){
                         Icon(imageVector = Icons.Default.Search, contentDescription = "")
                     }
                 }

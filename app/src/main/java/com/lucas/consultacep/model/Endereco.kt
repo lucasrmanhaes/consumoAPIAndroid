@@ -1,12 +1,11 @@
 package com.lucas.consultacep.model
 
-import com.google.gson.annotations.SerializedName
-
-    data class Endereco(
-        val cep: String = "",
-        @SerializedName("logradouro") val rua: String = "",
-        @SerializedName("localidade") val cidade: String = "",
-        val bairro: String = "",
-        val uf: String = ""
-    )
+data class Endereco(
+    val cep: String,
+    val logradouro: String,
+    val complemento: String,
+    val bairro: String,
+    val localidade: String,
+    val uf: String
+)
 
